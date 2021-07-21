@@ -1,4 +1,5 @@
 
+# This adds credentials for users based on an iput scpreadsheet
 # Set Variables
 users_file = 'USERS.xlsx'
 creds_file = 'CREDS.xlsx'
