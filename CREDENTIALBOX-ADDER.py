@@ -2,8 +2,8 @@
     # Set Initiaal Variables
 
     start_day = 1
-    start_month = 3
-    start_year = 1904
+    start_month = 1
+    start_year = 2015
     users_to_add = 100
 
     # IMPORT LIBRARIES
@@ -18,11 +18,12 @@
     try:
         myWindow = gw.getWindowsWithTitle('User Maint')[0]
         myWindow.activate()
+        time.sleep(0.2)
         myWindow.maximize()
     except:
         print('could not maximise User Maintenance window')
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Switch Search Field to Username
     ahk.key_press('F10')
