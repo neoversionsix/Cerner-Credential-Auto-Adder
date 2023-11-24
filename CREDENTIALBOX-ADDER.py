@@ -2,15 +2,24 @@
 # Set Initiaal Variables
 start_day = 1
 start_month = 1
-start_year = 2022
-users_to_add = 100
+start_year = 2023
+users_to_add = 50
 # IMPORT LIBRARIES
 import pyautogui
 import time
+import keyboard
 import pygetwindow as gw
 from ahk import AHK
 ahk = AHK()
-pyautogui.FAILSAFE = True
+pyautogui.FAILSAFE = False
+
+#This will stop the script when ESC is pressed
+def check_for_esc():
+    while True:
+        if keyboard.is_pressed('esc'):
+            print("ESC pressed. Exiting...")
+            exit()
+
 # Activate HNA User Window
 try:
     myWindow = gw.getWindowsWithTitle('User Maint')[0]
