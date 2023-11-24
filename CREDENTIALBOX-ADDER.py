@@ -11,14 +11,8 @@ import keyboard
 import pygetwindow as gw
 from ahk import AHK
 ahk = AHK()
-pyautogui.FAILSAFE = False
+pyautogui.FAILSAFE = True
 
-#This will stop the script when ESC is pressed
-def check_for_esc():
-    while True:
-        if keyboard.is_pressed('esc'):
-            print("ESC pressed. Exiting...")
-            exit()
 
 # Activate HNA User Window
 try:

@@ -9,11 +9,12 @@ import keyboard
 import pygetwindow as gw
 from ahk import AHK
 
-def check_for_space():
-    while True:
-        if keyboard.is_pressed('space'):
-            print("Spacebar pressed. Exiting...")
-            exit()
+# Global flag to control script execution
+script_running = False
+
+def terminate_script():
+    global script_running
+    script_running = False  # Set the flag to False to stop the script
 
 # Function that contains your script
 def start_script(start_day, start_month, start_year, users_to_add):
@@ -21,36 +22,30 @@ def start_script(start_day, start_month, start_year, users_to_add):
     # This adds credentials to the pool for the credential box
     # Set Initial Variables
     ahk = AHK()
-    pyautogui.FAILSAFE = False
+    pyautogui.FAILSAFE = True
 
     # Activate HNA User Window
-    try:
-        myWindow = gw.getWindowsWithTitle('User Maint')[0]
-        myWindow.activate()
-        time.sleep(0.2)
-        myWindow.maximize()
-    except:
-        print('could not maximise User Maintenance window')
+    ahk.click(80,1060)
     time.sleep(1)
     # Switch Search Field to Username
     ahk.key_press('F10')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('right')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('enter')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('tab')
-    time.sleep(0.2)
+    time.sleep(0.3)
     # Open Credential Box
     user = 'credentialbox'
     pyautogui.typewrite(user, interval=0.1)
@@ -58,60 +53,60 @@ def start_script(start_day, start_month, start_year, users_to_add):
     # Select Credential Button
     time.sleep(1)
     ahk.key_press('f10')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('right')
-    time.sleep(0.2)
+    time.sleep(0.3)
     ahk.key_press('c')
     time.sleep(1)
     count = int(0)
     while count < users_to_add:  
         # Click on create new credential
         if count == 0:
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('down')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
         else:
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('down')
-            time.sleep(0.2)
+            time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.2)     
+            time.sleep(0.3)     
         #Choose Credential
         to_type = 'a'
         pyautogui.typewrite(to_type, interval=0.1)
-        time.sleep(0.2)
+        time.sleep(0.3)
         # Go to type of licence
         ahk.key_press('tab')
         time.sleep(0.4)
         # Choose Licence
         ahk.key_press('l')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         # Enter date
         day = "{0:0=2d}".format(start_day) # convert two digit
         month = "{0:0=2d}".format(start_month) # convert two digit
@@ -129,41 +124,41 @@ def start_script(start_day, start_month, start_year, users_to_add):
             start_month = 1
             start_year +=1
         # Hit Apply
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('enter')
         time.sleep(2)
         # delete credential
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('space')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('enter')
         # Apply deletion
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(0.3)
         ahk.key_press('enter')
         time.sleep(1)
         count +=1
@@ -209,10 +204,8 @@ users_entry.grid(row=3, column=1)
 start_button = tk.Button(root, text="Start", command=run_script)
 start_button.grid(row=4, column=0, columnspan=2)
 
-
-# Start the thread for checking spacebar press
-spacebar_thread = threading.Thread(target=check_for_space, daemon=True)
-spacebar_thread.start()
+terminate_button = tk.Button(root, text="Terminate", command=terminate_script)
+terminate_button.grid(row=5, column=0, columnspan=2)
 
 # Start the GUI event loop
 root.mainloop()
