@@ -21,6 +21,8 @@ def start_script(start_day, start_month, start_year, users_to_add):
     # ... (Your script goes here, using the passed values of start_day, etc.)
     # This adds credentials to the pool for the credential box
     # Set Initial Variables
+    global script_running
+    script_running = True  # Set the flag to True when the script starts
     ahk = AHK()
     pyautogui.FAILSAFE = True
 
@@ -48,22 +50,25 @@ def start_script(start_day, start_month, start_year, users_to_add):
     time.sleep(0.3)
     # Open Credential Box
     user = 'credentialbox'
-    pyautogui.typewrite(user, interval=0.1)
-    ahk.key_press('Enter')
-    # Select Credential Button
-    time.sleep(1)
-    ahk.key_press('f10')
-    time.sleep(0.3)
-    ahk.key_press('down')
-    time.sleep(0.3)
-    ahk.key_press('down')
-    time.sleep(0.3)
-    ahk.key_press('right')
-    time.sleep(0.3)
-    ahk.key_press('c')
-    time.sleep(1)
-    count = int(0)
-    while count < users_to_add:  
+    if script_running == True:
+        pyautogui.typewrite(user, interval=0.1)
+        ahk.key_press('Enter')
+        # Select Credential Button
+        time.sleep(1)
+        ahk.key_press('f10')
+        time.sleep(0.3)
+        ahk.key_press('down')
+        time.sleep(0.3)
+        ahk.key_press('down')
+        time.sleep(0.3)
+        ahk.key_press('right')
+        time.sleep(0.3)
+        ahk.key_press('c')
+        time.sleep(1)
+        count = int(0)
+    else:
+        print("Script terminated by user.")        
+    while count < users_to_add and script_running:  
         # Click on create new credential
         if count == 0:
             time.sleep(0.3)
@@ -88,7 +93,10 @@ def start_script(start_day, start_month, start_year, users_to_add):
             ahk.key_press('down')
             time.sleep(0.3)
             ahk.key_press('tab')
-            time.sleep(0.3)     
+            time.sleep(0.3)
+        if not script_running:
+            print("Script terminated by user.")
+            break
         #Choose Credential
         to_type = 'a'
         pyautogui.typewrite(to_type, interval=0.1)
@@ -162,6 +170,9 @@ def start_script(start_day, start_month, start_year, users_to_add):
         ahk.key_press('enter')
         time.sleep(1)
         count +=1
+        if not script_running:
+            print("Script terminated by user.")
+            break
 
 # Function to run the script in a separate thread
 def run_script():
