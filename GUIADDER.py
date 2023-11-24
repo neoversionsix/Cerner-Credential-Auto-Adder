@@ -8,6 +8,7 @@ import time
 import keyboard
 import pygetwindow as gw
 from ahk import AHK
+import tkinter.font as tkFont
 
 # Global flag to control script execution
 script_running = False
@@ -25,44 +26,49 @@ def start_script(start_day, start_month, start_year, users_to_add):
     script_running = True  # Set the flag to True when the script starts
     ahk = AHK()
     pyautogui.FAILSAFE = True
-
     # Activate HNA User Window
-    ahk.click(80,1060)
+    try:
+        myWindow = gw.getWindowsWithTitle('User Maint')[0]
+        myWindow.activate()
+        myWindow.maximize()
+    except:
+        print('could not maximise User Maintenance window')
     time.sleep(1)
     # Switch Search Field to Username
     ahk.key_press('F10')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('down')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('down')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('down')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('down')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('right')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('down')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('enter')
-    time.sleep(0.3)
+    time.sleep(0.2)
     ahk.key_press('tab')
-    time.sleep(0.3)
-    # Open Credential Box
-    user = 'credentialbox'
+    # Open Credential Box   
+    time.sleep(0.2)
+    ahk.key_press('Space')
+    ahk.key_press('Backspace')
     if script_running == True:
-        pyautogui.typewrite(user, interval=0.1)
+        pyautogui.typewrite("credentialbox", interval=0.1)
         ahk.key_press('Enter')
         # Select Credential Button
         time.sleep(1)
         ahk.key_press('f10')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('down')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('down')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('right')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('c')
         time.sleep(1)
         count = int(0)
@@ -71,50 +77,50 @@ def start_script(start_day, start_month, start_year, users_to_add):
     while count < users_to_add and script_running:  
         # Click on create new credential
         if count == 0:
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('down')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
         else:
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('down')
-            time.sleep(0.3)
+            time.sleep(0.2)
             ahk.key_press('tab')
-            time.sleep(0.3)
+            time.sleep(0.2)
         if not script_running:
             print("Script terminated by user.")
             break
         #Choose Credential
         to_type = 'a'
         pyautogui.typewrite(to_type, interval=0.1)
-        time.sleep(0.3)
+        time.sleep(0.2)
         # Go to type of licence
         ahk.key_press('tab')
         time.sleep(0.4)
         # Choose Licence
         ahk.key_press('l')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         # Enter date
         day = "{0:0=2d}".format(start_day) # convert two digit
         month = "{0:0=2d}".format(start_month) # convert two digit
@@ -132,41 +138,41 @@ def start_script(start_day, start_month, start_year, users_to_add):
             start_month = 1
             start_year +=1
         # Hit Apply
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('enter')
         time.sleep(2)
         # delete credential
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('space')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('enter')
         # Apply deletion
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('tab')
-        time.sleep(0.3)
+        time.sleep(0.2)
         ahk.key_press('enter')
         time.sleep(1)
         count +=1
@@ -214,8 +220,12 @@ users_entry.grid(row=3, column=1)
 # Create and layout buttons
 start_button = tk.Button(root, text="Start", command=run_script)
 start_button.grid(row=4, column=0, columnspan=2)
+# Create a custom font
+custom_font = tkFont.Font(family="Helvetica", size=16, weight="bold")
 
-terminate_button = tk.Button(root, text="Terminate", command=terminate_script)
+terminate_button = tk.Button(root, text="CLICK TO TERMINATE SCRIPT", command=terminate_script,
+                             font=custom_font, bg="red", fg="white",
+                             height=20, width=50, padx=10, pady=10)
 terminate_button.grid(row=5, column=0, columnspan=2)
 
 # Start the GUI event loop
