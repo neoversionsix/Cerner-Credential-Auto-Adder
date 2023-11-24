@@ -5,9 +5,15 @@ import threading
 # Import your libraries
 import pyautogui
 import time
-import keyboard        
+import keyboard
 import pygetwindow as gw
 from ahk import AHK
+
+def check_for_space():
+    while True:
+        if keyboard.is_pressed('space'):
+            print("Spacebar pressed. Exiting...")
+            exit()
 
 # Function that contains your script
 def start_script(start_day, start_month, start_year, users_to_add):
@@ -15,14 +21,7 @@ def start_script(start_day, start_month, start_year, users_to_add):
     # This adds credentials to the pool for the credential box
     # Set Initial Variables
     ahk = AHK()
-    pyautogui.FAILSAFE = True
-
-    #This will stop the script when ESC is pressed
-    def check_for_esc():
-        while True:
-            if keyboard.is_pressed('esc'):
-                print("ESC pressed. Exiting...")
-                exit()
+    pyautogui.FAILSAFE = False
 
     # Activate HNA User Window
     try:
@@ -197,7 +196,8 @@ tk.Label(root, text="Start Month:").grid(row=1, column=0)
 month_entry = tk.Entry(root)
 month_entry.grid(row=1, column=1)
 
-tk.Label(root, text="Start Year:").grid(row=2, column=0)
+tk.Label(root, text="Start Year:").grid(row=2, column=0)                
+
 year_entry = tk.Entry(root)
 year_entry.grid(row=2, column=1)
 
@@ -208,6 +208,11 @@ users_entry.grid(row=3, column=1)
 # Create and layout buttons
 start_button = tk.Button(root, text="Start", command=run_script)
 start_button.grid(row=4, column=0, columnspan=2)
+
+
+# Start the thread for checking spacebar press
+spacebar_thread = threading.Thread(target=check_for_space, daemon=True)
+spacebar_thread.start()
 
 # Start the GUI event loop
 root.mainloop()
