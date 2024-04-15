@@ -13,6 +13,17 @@ import tkinter.font as tkFont
 # Global flag to control script execution
 script_running = False
 
+SHORT_DELAY = 0.2
+LONG_DELAY = 1
+
+def press_key_with_delay(key, delay=SHORT_DELAY):
+    ahk.key_press(key)
+    time.sleep(delay)
+
+def press_tab(num_times):
+    for _ in range(num_times):
+        press_key_with_delay('tab')
+
 def terminate_script():
     global script_running
     script_running = False  # Set the flag to False to stop the script
@@ -27,100 +38,87 @@ def start_script(start_day, start_month, start_year, users_to_add):
     ahk = AHK()
     pyautogui.FAILSAFE = True
     # Activate HNA User Window
-    try:
-        myWindow = gw.getWindowsWithTitle('User Maint')[0]
-        myWindow.activate()
-        myWindow.maximize()
-    except:
-        print('could not maximise User Maintenance window')
-    time.sleep(1)
+    #region
+    for _ in range(3):  # Try 3 times
+        try:
+            myWindow = gw.getWindowsWithTitle('User Maint')[0]
+            myWindow.activate()
+            break  # If activation is successful, break the loop
+        except:
+            print('Attempt to activate User Maintenance window failed. Retrying...')
+            time.sleep(0.5)  # Wait for a half second before retrying
+    else:
+        print('Could not activate User Maintenance window after 3 attempts. Continuing...')
+    #endregion
     # Switch Search Field to Username
     ahk.key_press('F10')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('right')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('down')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('enter')
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('tab')
     # Open Credential Box   
-    time.sleep(0.2)
+    time.sleep(SHORT_DELAY)
     ahk.key_press('Space')
     ahk.key_press('Backspace')
     if script_running == True:
         pyautogui.typewrite("credentialbox", interval=0.1)
         ahk.key_press('Enter')
         # Select Credential Button
-        time.sleep(1)
-        ahk.key_press('f10')
-        time.sleep(0.2)
-        ahk.key_press('down')
-        time.sleep(0.2)
-        ahk.key_press('down')
-        time.sleep(0.2)
-        ahk.key_press('right')
-        time.sleep(0.2)
-        ahk.key_press('c')
-        time.sleep(1)
+        time.sleep(LONG_DELAY)
+        press_key_with_delay('f10')
+        press_key_with_delay('down')
+        press_key_with_delay('down')
+        press_key_with_delay('right')
+        press_key_with_delay('c')
+        time.sleep(LONG_DELAY)
         count = int(0)
     else:
         print("Script terminated by user.")        
     while count < users_to_add and script_running:  
         # Click on create new credential
         if count == 0:
-            time.sleep(0.2)
-            ahk.key_press('tab')
-            time.sleep(0.2)
-            ahk.key_press('tab')
-            time.sleep(0.2)
-            ahk.key_press('tab')
-            time.sleep(0.2)
-            ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(SHORT_DELAY)
+            press_tab(4)
+            time.sleep(SHORT_DELAY)
             ahk.key_press('down')
-            time.sleep(0.2)
+            time.sleep(SHORT_DELAY)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(SHORT_DELAY)
         else:
-            time.sleep(0.2)
-            ahk.key_press('tab')
-            time.sleep(0.2)
-            ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(SHORT_DELAY)
+            press_tab(2)
+            time.sleep(SHORT_DELAY)
             ahk.key_press('down')
-            time.sleep(0.2)
+            time.sleep(SHORT_DELAY)
             ahk.key_press('tab')
-            time.sleep(0.2)
+            time.sleep(SHORT_DELAY)
         if not script_running:
             print("Script terminated by user.")
             break
         #Choose Credential
         to_type = 'a'
         pyautogui.typewrite(to_type, interval=0.1)
-        time.sleep(0.2)
+        time.sleep(SHORT_DELAY)
         # Go to type of licence
         ahk.key_press('tab')
         time.sleep(0.4)
         # Choose Licence
         ahk.key_press('l')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(SHORT_DELAY)
+        press_tab(4)
+        time.sleep(SHORT_DELAY)
         # Enter date
         day = "{0:0=2d}".format(start_day) # convert two digit
         month = "{0:0=2d}".format(start_month) # convert two digit
@@ -138,41 +136,23 @@ def start_script(start_day, start_month, start_year, users_to_add):
             start_month = 1
             start_year +=1
         # Hit Apply
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(SHORT_DELAY)
+        press_tab(7)
+        time.sleep(SHORT_DELAY)
         ahk.key_press('enter')
         time.sleep(2)
         # delete credential
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
+        press_tab(2)
+        time.sleep(SHORT_DELAY)
         ahk.key_press('space')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(SHORT_DELAY)
+        press_tab(2)
+        time.sleep(SHORT_DELAY)
         ahk.key_press('enter')
         # Apply deletion
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
-        ahk.key_press('tab')
-        time.sleep(0.2)
+        time.sleep(SHORT_DELAY)
+        press_tab(2)
+        time.sleep(SHORT_DELAY)
         ahk.key_press('enter')
         time.sleep(1)
         count +=1
