@@ -1,9 +1,9 @@
 # This adds credentials to the pool for the credential box
-# Set Initiaal Variables
+# Set Initial Variables
 start_day = 1
 start_month = 1
-start_year = 2023
-users_to_add = 50
+start_year = 2018
+users_to_add = 100
 # IMPORT LIBRARIES
 import pyautogui
 import time
