@@ -1,32 +1,50 @@
+
+
+# Import your libraries
 import tkinter as tk
 from tkinter import messagebox
 import threading
-
-# Import your libraries
+import sys
 import pyautogui
 import time
-import keyboard
 import pygetwindow as gw
 from ahk import AHK
 import tkinter.font as tkFont
 
+#GLOBAL VARIABLES
 # Global flag to control script execution
 script_running = False
-
+#Delays
 SHORT_DELAY = 0.2
 LONG_DELAY = 1
+# Create an AHK object
+ahk = AHK()
 
+#GLOBAL FUNCTIONS
+# Function to press a key with a short delay
 def press_key_with_delay(key, delay=SHORT_DELAY):
     ahk.key_press(key)
     time.sleep(delay)
-
+# Function to press the Tab key a specified number of times
 def press_tab(num_times):
     for _ in range(num_times):
         press_key_with_delay('tab')
-
+# Function to terminate the script
 def terminate_script():
     global script_running
     script_running = False  # Set the flag to False to stop the script
+
+# Redirect stdout to the Text widget
+class TextRedirector(object):
+    def __init__(self, widget):
+        self.widget = widget
+
+    def write(self, str):
+        self.widget.insert(tk.END, str)
+        self.widget.see(tk.END)
+
+    def flush(self):
+        pass
 
 # Function that contains your script
 def start_script(start_day, start_month, start_year, users_to_add):
@@ -35,7 +53,6 @@ def start_script(start_day, start_month, start_year, users_to_add):
     # Set Initial Variables
     global script_running
     script_running = True  # Set the flag to True when the script starts
-    ahk = AHK()
     pyautogui.FAILSAFE = True
     # Activate HNA User Window
     #region
@@ -48,9 +65,12 @@ def start_script(start_day, start_month, start_year, users_to_add):
             print('Attempt to activate User Maintenance window failed. Retrying...')
             time.sleep(0.5)  # Wait for a half second before retrying
     else:
-        print('Could not activate User Maintenance window after 3 attempts. Continuing...')
+        print('Could not activate User Maintenance window after 3 attempts. Terminating application...')
+        root.destroy()  # Close the application
+        return  # Exit the function
     #endregion
     # Switch Search Field to Username
+    time.sleep(SHORT_DELAY)
     ahk.key_press('F10')
     time.sleep(SHORT_DELAY)
     ahk.key_press('down')
@@ -73,8 +93,10 @@ def start_script(start_day, start_month, start_year, users_to_add):
     ahk.key_press('Space')
     ahk.key_press('Backspace')
     if script_running == True:
+        print("Script is running")
         pyautogui.typewrite("credentialbox", interval=0.1)
         ahk.key_press('Enter')
+        print("Credential Box Opened")
         # Select Credential Button
         time.sleep(LONG_DELAY)
         press_key_with_delay('f10')
@@ -88,6 +110,7 @@ def start_script(start_day, start_month, start_year, users_to_add):
         print("Script terminated by user.")        
     while count < users_to_add and script_running:  
         # Click on create new credential
+        print("Creds Created: ", count)
         if count == 0:
             time.sleep(SHORT_DELAY)
             press_tab(4)
@@ -207,6 +230,14 @@ terminate_button = tk.Button(root, text="CLICK TO TERMINATE SCRIPT", command=ter
                              font=custom_font, bg="red", fg="white",
                              height=20, width=50, padx=10, pady=10)
 terminate_button.grid(row=5, column=0, columnspan=2)
+
+# Create a Text widget for the console at the bottom of the GUI
+console = tk.Text(root)
+console.grid(row=7, column=0, columnspan=2)
+
+# Redirect stdout and stderr
+sys.stdout = TextRedirector(console)
+sys.stderr = TextRedirector(console)
 
 # Start the GUI event loop
 root.mainloop()
