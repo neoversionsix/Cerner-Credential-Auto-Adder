@@ -1,5 +1,3 @@
-
-
 # Import your libraries
 import tkinter as tk
 from tkinter import messagebox
@@ -47,7 +45,7 @@ class TextRedirector(object):
         pass
 
 # Function that contains your script
-def start_script(start_day, start_month, start_year, users_to_add):
+def start_script(start_day, start_month, start_year, credentials_to_add):
     # ... (Your script goes here, using the passed values of start_day, etc.)
     # This adds credentials to the pool for the credential box
     # Set Initial Variables
@@ -108,7 +106,7 @@ def start_script(start_day, start_month, start_year, users_to_add):
         count = int(0)
     else:
         print("Script terminated by user.")        
-    while count < users_to_add and script_running:  
+    while count < credentials_to_add and script_running:  
         # Click on create new credential
         print("Creds Created: ", count)
         if count == 0:
@@ -190,10 +188,10 @@ def run_script():
         start_day = int(day_entry.get())
         start_month = int(month_entry.get())
         start_year = int(year_entry.get())
-        users_to_add = int(users_entry.get())
+        credentials_to_add = int(users_entry.get())
 
         # Start the script in a new thread
-        script_thread = threading.Thread(target=start_script, args=(start_day, start_month, start_year, users_to_add))
+        script_thread = threading.Thread(target=start_script, args=(start_day, start_month, start_year, credentials_to_add))
         script_thread.start()
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers")
@@ -216,7 +214,7 @@ tk.Label(root, text="Start Year:").grid(row=2, column=0)
 year_entry = tk.Entry(root)
 year_entry.grid(row=2, column=1)
 
-tk.Label(root, text="Users to Add:").grid(row=3, column=0)
+tk.Label(root, text="Credentials to Add:").grid(row=3, column=0)
 users_entry = tk.Entry(root)
 users_entry.grid(row=3, column=1)
 
