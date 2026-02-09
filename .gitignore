@@ -1,0 +1,11 @@
+# Python cache/bytecode
+__pycache__/
+*.py[cod]
+
+# PyInstaller outputs
+build/
+dist/
+*.spec
+
+# Windows executable artifacts
+*.exe
