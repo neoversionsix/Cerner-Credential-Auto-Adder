@@ -29,6 +29,16 @@ def press_key_with_delay(key, delay=SHORT_DELAY):
 def press_tab(num_times):
     for _ in range(num_times):
         press_key_with_delay('tab')
+
+# Paste text with a short settle delay for clipboard + UI processing
+def paste_text(text, select_all=False, pre_delay=0.08, post_delay=0.35):
+    pyperclip.copy(text)
+    time.sleep(pre_delay)
+    if select_all:
+        pyautogui.hotkey('ctrl', 'a', interval=0.05)
+        time.sleep(0.05)
+    pyautogui.hotkey('ctrl', 'v', interval=0.05)
+    time.sleep(post_delay)
 # Function to terminate the script
 def terminate_script():
     global script_running
@@ -93,8 +103,7 @@ def start_script(start_day, start_month, start_year, credentials_to_add):
     ahk.key_press('Backspace')
     if script_running == True:
         print("Script is running")
-        pyperclip.copy(username_text)
-        pyautogui.hotkey('ctrl', 'v')
+        paste_text(username_text)
         #pyautogui.typewrite("credentialbox", interval = SHORT_DELAY)
         ahk.key_press('Enter')
         print("Credential Box Opened")
@@ -148,8 +157,7 @@ def start_script(start_day, start_month, start_year, credentials_to_add):
         month = "{0:0=2d}".format(start_month) # convert two digit
         year = str(start_year) # year to string
         date_text = day + month + year
-        pyperclip.copy(date_text)
-        pyautogui.hotkey('ctrl', 'v')
+        paste_text(date_text, post_delay=0.5)
         # Get date for next round
         start_day +=1
         if start_day > 25:
