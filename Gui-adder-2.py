@@ -147,9 +147,9 @@ def start_script(start_day, start_month, start_year, credentials_to_add):
         day = "{0:0=2d}".format(start_day) # convert two digit
         month = "{0:0=2d}".format(start_month) # convert two digit
         year = str(start_year) # year to string
-        pyautogui.typewrite(day, interval=0.1)
-        pyautogui.typewrite(month, interval=0.1)
-        pyautogui.typewrite(year, interval=0.1)
+        date_text = day + month + year
+        pyperclip.copy(date_text)
+        pyautogui.hotkey('ctrl', 'v')
         # Get date for next round
         start_day +=1
         if start_day > 25:
