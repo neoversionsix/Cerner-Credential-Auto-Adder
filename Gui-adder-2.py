@@ -4,7 +4,6 @@ from tkinter import messagebox
 import threading
 import sys
 import pyautogui
-import time
 import pygetwindow as gw
 from ahk import AHK
 import tkinter.font as tkFont
@@ -13,6 +12,7 @@ import pyperclip
 #GLOBAL VARIABLES
 # Global flag to control script execution
 script_running = False
+stop_event = threading.Event()
 #Delays
 username_text = "credentialbox"
 SHORT_DELAY = 0.2
@@ -21,10 +21,26 @@ LONG_DELAY = 1
 ahk = AHK()
 
 #GLOBAL FUNCTIONS
+class ScriptTerminated(Exception):
+    pass
+
+def ensure_running():
+    if not script_running or stop_event.is_set():
+        raise ScriptTerminated
+
+def sleep_with_cancel(delay):
+    ensure_running()
+    if stop_event.wait(max(0, delay)):
+        raise ScriptTerminated
+
+def press_key(key):
+    ensure_running()
+    ahk.key_press(key)
+
 # Function to press a key with a short delay
 def press_key_with_delay(key, delay=SHORT_DELAY):
-    ahk.key_press(key)
-    time.sleep(delay)
+    press_key(key)
+    sleep_with_cancel(delay)
 # Function to press the Tab key a specified number of times
 def press_tab(num_times):
     for _ in range(num_times):
@@ -32,17 +48,34 @@ def press_tab(num_times):
 
 # Paste text with a short settle delay for clipboard + UI processing
 def paste_text(text, select_all=False, pre_delay=0.08, post_delay=0.35):
+    ensure_running()
     pyperclip.copy(text)
-    time.sleep(pre_delay)
+    sleep_with_cancel(pre_delay)
     if select_all:
         pyautogui.hotkey('ctrl', 'a', interval=0.05)
-        time.sleep(0.05)
+        sleep_with_cancel(0.05)
+    ensure_running()
     pyautogui.hotkey('ctrl', 'v', interval=0.05)
-    time.sleep(post_delay)
+    sleep_with_cancel(post_delay)
 # Function to terminate the script
 def terminate_script():
     global script_running
     script_running = False  # Set the flag to False to stop the script
+    stop_event.set()
+
+def run_with_termination_handling(func):
+    def wrapper(*args, **kwargs):
+        global script_running
+        script_running = True
+        stop_event.clear()
+        pyautogui.FAILSAFE = True
+        try:
+            return func(*args, **kwargs)
+        except ScriptTerminated:
+            print("Script terminated by user.")
+        finally:
+            script_running = False
+    return wrapper
 
 # Redirect stdout to the Text widget
 class TextRedirector(object):
@@ -57,13 +90,10 @@ class TextRedirector(object):
         pass
 
 # Function that contains your script
+@run_with_termination_handling
 def start_script(start_day, start_month, start_year, credentials_to_add):
     # ... (Your script goes here, using the passed values of start_day, etc.)
     # This adds credentials to the pool for the credential box
-    # Set Initial Variables
-    global script_running
-    script_running = True  # Set the flag to True when the script starts
-    pyautogui.FAILSAFE = True
     # Activate HNA User Window
     #region
     for _ in range(3):  # Try 3 times
@@ -71,87 +101,82 @@ def start_script(start_day, start_month, start_year, credentials_to_add):
             myWindow = gw.getWindowsWithTitle('User Maint')[0]
             myWindow.activate()
             break  # If activation is successful, break the loop
-        except:
+        except Exception:
             print('Attempt to activate User Maintenance window failed. Retrying...')
-            time.sleep(0.5)  # Wait for a half second before retrying
+            sleep_with_cancel(0.5)  # Wait for a half second before retrying
     else:
         print('Could not activate User Maintenance window after 3 attempts. Terminating application...')
         root.destroy()  # Close the application
         return  # Exit the function
     #endregion
     # Switch Search Field to Username
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('F10')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('down')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('down')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('down')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('down')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('right')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('down')
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('enter')
-    time.sleep(SHORT_DELAY)
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('F10')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('down')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('down')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('down')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('down')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('right')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('down')
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('enter')
+    sleep_with_cancel(SHORT_DELAY)
     # Open Credential Box   
-    time.sleep(SHORT_DELAY)
-    ahk.key_press('Space')
-    ahk.key_press('Backspace')
-    if script_running == True:
-        print("Script is running")
-        paste_text(username_text)
-        #pyautogui.typewrite("credentialbox", interval = SHORT_DELAY)
-        ahk.key_press('Enter')
-        print("Credential Box Opened")
-        # Select Credential Button
-        time.sleep(LONG_DELAY)
-        press_key_with_delay('f10')
-        press_key_with_delay('down')
-        press_key_with_delay('down')
-        press_key_with_delay('right')
-        press_key_with_delay('c')
-        time.sleep(LONG_DELAY)
-        count = int(0)
-    else:
-        print("Script terminated by user.")        
+    sleep_with_cancel(SHORT_DELAY)
+    press_key('Space')
+    press_key('Backspace')
+    print("Script is running")
+    paste_text(username_text)
+    #pyautogui.typewrite("credentialbox", interval = SHORT_DELAY)
+    press_key('Enter')
+    print("Credential Box Opened")
+    # Select Credential Button
+    sleep_with_cancel(LONG_DELAY)
+    press_key_with_delay('f10')
+    press_key_with_delay('down')
+    press_key_with_delay('down')
+    press_key_with_delay('right')
+    press_key_with_delay('c')
+    sleep_with_cancel(LONG_DELAY)
+    count = int(0)
     while count < credentials_to_add and script_running:  
         # Click on create new credential
         print("Creds Created: ", count)
         if count == 0:
-            time.sleep(SHORT_DELAY)
+            sleep_with_cancel(SHORT_DELAY)
             press_tab(4)
-            time.sleep(SHORT_DELAY)
-            ahk.key_press('down')
-            time.sleep(SHORT_DELAY)
-            ahk.key_press('tab')
-            time.sleep(SHORT_DELAY)
+            sleep_with_cancel(SHORT_DELAY)
+            press_key('down')
+            sleep_with_cancel(SHORT_DELAY)
+            press_key('tab')
+            sleep_with_cancel(SHORT_DELAY)
         else:
-            time.sleep(SHORT_DELAY)
+            sleep_with_cancel(SHORT_DELAY)
             press_tab(2)
-            time.sleep(SHORT_DELAY)
-            ahk.key_press('down')
-            time.sleep(SHORT_DELAY)
-            ahk.key_press('tab')
-            time.sleep(SHORT_DELAY)
-        if not script_running:
-            print("Script terminated by user.")
-            break
+            sleep_with_cancel(SHORT_DELAY)
+            press_key('down')
+            sleep_with_cancel(SHORT_DELAY)
+            press_key('tab')
+            sleep_with_cancel(SHORT_DELAY)
         #Choose Credential
         to_type = 'a'
+        ensure_running()
         pyautogui.typewrite(to_type, interval=0.1)
-        time.sleep(SHORT_DELAY)
+        sleep_with_cancel(SHORT_DELAY)
         # Go to type of licence
-        ahk.key_press('tab')
-        time.sleep(0.4)
+        press_key('tab')
+        sleep_with_cancel(0.4)
         # Choose Licence
-        ahk.key_press('l')
-        time.sleep(SHORT_DELAY)
+        press_key('l')
+        sleep_with_cancel(SHORT_DELAY)
         press_tab(4)
-        time.sleep(SHORT_DELAY)
+        sleep_with_cancel(SHORT_DELAY)
         # Enter date
         day = "{0:0=2d}".format(start_day) # convert two digit
         month = "{0:0=2d}".format(start_month) # convert two digit
@@ -168,32 +193,32 @@ def start_script(start_day, start_month, start_year, credentials_to_add):
             start_month = 1
             start_year +=1
         # Hit Apply
-        time.sleep(SHORT_DELAY)
+        sleep_with_cancel(SHORT_DELAY)
         press_tab(7)
-        time.sleep(SHORT_DELAY)
-        ahk.key_press('enter')
-        time.sleep(2)
+        sleep_with_cancel(SHORT_DELAY)
+        press_key('enter')
+        sleep_with_cancel(2)
         # delete credential
         press_tab(2)
-        time.sleep(SHORT_DELAY)
-        ahk.key_press('space')
-        time.sleep(SHORT_DELAY)
+        sleep_with_cancel(SHORT_DELAY)
+        press_key('space')
+        sleep_with_cancel(SHORT_DELAY)
         press_tab(2)
-        time.sleep(SHORT_DELAY)
-        ahk.key_press('enter')
+        sleep_with_cancel(SHORT_DELAY)
+        press_key('enter')
         # Apply deletion
-        time.sleep(SHORT_DELAY)
+        sleep_with_cancel(SHORT_DELAY)
         press_tab(2)
-        time.sleep(SHORT_DELAY)
-        ahk.key_press('enter')
-        time.sleep(1)
+        sleep_with_cancel(SHORT_DELAY)
+        press_key('enter')
+        sleep_with_cancel(1)
         count +=1
-        if not script_running:
-            print("Script terminated by user.")
-            break
 
 # Function to run the script in a separate thread
 def run_script():
+    if script_running:
+        messagebox.showwarning("Script Running", "The script is already running.")
+        return
     try:
         # Retrieve values from the GUI
         start_day = int(day_entry.get())
