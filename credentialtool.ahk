@@ -42,6 +42,9 @@ global WorkerPID := 0
 global LogPath := A_Temp "\CredentialTool.log"
 global LogPos := 0
 
+; Clear previous session log so GUI starts fresh
+try FileDelete(LogPath)
+
 global g, edDay, edMonth, edYear, edCount, btnStart, btnStop, logBox
 
 g := Gui(, "Credential Script (AHK v2)")
@@ -162,6 +165,7 @@ Log(msg, rawAppend := false) {
     }
     try SendMessage(0x00B7, -1, -1, logBox.Hwnd) ; EM_SCROLLCARET
 }
+
 
 IntegerSafe(v) {
     try {
